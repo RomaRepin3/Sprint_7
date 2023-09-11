@@ -1,5 +1,6 @@
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -34,6 +35,17 @@ public class LoginCourierTest {
                 .and()
                 .body(createCourierDto)
                 .post("/api/v1/courier");
+    }
+
+    @After
+    public void tearDown() {
+        LoginCourierDto loginCourierDto = new LoginCourierDto(createCourierDto.getLogin(), createCourierDto.getPassword());
+        IdDto idDto = given()
+                .header("Content-type", "application/json")
+                .and()
+                .body(loginCourierDto)
+                .post("/api/v1/courier/login").as(IdDto.class);
+        given().pathParam("id", idDto.getId()).delete("/api/v1/courier/{id}");
     }
 
     @Test
