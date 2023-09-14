@@ -1,3 +1,5 @@
+package dto;
+
 public class IdDto {
     private int id;
 

@@ -1,3 +1,5 @@
+package dto;
+
 public class LoginCourierWithoutPasswordDto {
     private String login;
 

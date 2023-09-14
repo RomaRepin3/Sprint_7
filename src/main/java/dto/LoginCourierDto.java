@@ -1,3 +1,5 @@
+package dto;
+
 public class LoginCourierDto {
     private String login;
     private String password;

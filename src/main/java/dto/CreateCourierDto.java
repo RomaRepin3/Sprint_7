@@ -1,3 +1,5 @@
+package dto;
+
 public class CreateCourierDto extends LoginCourierDto {
     private String firstName;
 

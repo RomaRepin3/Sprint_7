@@ -1,22 +1,19 @@
+import dto.*;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import requests.RequestsMethods;
+import settings.MainSettings;
+import utils.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static io.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.equalTo;
 
 public class CreateCourierTest {
-    private final String COURIER_PATH = "/api/v1/courier";
-    private final String CONTENT_TYPE_STRING = "Content-type";
-    private final String CONTENT_TYPE_OBJECT = "application/json";
-    private final int CREATED_CODE = 201;
-    private final int BAD_CODE = 400;
-    private final String NOT_ENOUGH_DATA_MESSAGE = "Недостаточно данных для создания учетной записи";
     List<CreateCourierDto> courierList = new ArrayList<>();
 
     @Before
@@ -28,12 +25,8 @@ public class CreateCourierTest {
     public void tearDown() {
         for (CreateCourierDto createCourierDto : courierList) {
             LoginCourierDto loginCourierDto = new LoginCourierDto(createCourierDto.getLogin(), createCourierDto.getPassword());
-            IdDto idDto = given()
-                    .header("Content-type", "application/json")
-                    .and()
-                    .body(loginCourierDto)
-                    .post("/api/v1/courier/login").as(IdDto.class);
-            given().pathParam("id", idDto.getId()).delete("/api/v1/courier/{id}");
+            int id = RequestsMethods.loginResponseDeserialization(MainSettings.LOG_IN_BY_COURIER_URL, loginCourierDto);
+            RequestsMethods.sendDeleteWithParamId(id);
         }
     }
 
@@ -42,13 +35,9 @@ public class CreateCourierTest {
         CreateCourierDto createCourierDto = new CreateCourierDto(Utils.getRandomString(), Utils.getRandomString());
         courierList.add(createCourierDto);
 
-        Response response = given()
-                .header(CONTENT_TYPE_STRING, CONTENT_TYPE_OBJECT)
-                .and()
-                .body(createCourierDto)
-                .post(COURIER_PATH);
-        response.then().statusCode(CREATED_CODE);
-        response.then().assertThat().body("ok",equalTo(true));
+        Response response = RequestsMethods.sendPost(MainSettings.COURIER_URL, createCourierDto);
+        RequestsMethods.checkResponseStatusCode(response, MainSettings.CREATED_STATUS_CODE);
+        RequestsMethods.checkResponseBodyForCourierCreatePositive(response);
     }
 
     @Test
@@ -59,42 +48,32 @@ public class CreateCourierTest {
         courierList.add(firstCreateCourierDto);
         courierList.add(secondCreateCourierDto);
 
-        Response firstResponse = given()
-                .header(CONTENT_TYPE_STRING, CONTENT_TYPE_OBJECT)
-                .and()
-                .body(firstCreateCourierDto)
-                .post(COURIER_PATH);
-        firstResponse.then().statusCode(CREATED_CODE);
-        firstResponse.then().assertThat().body("ok",equalTo(true));
+        Response firstResponse = RequestsMethods.sendPost(MainSettings.COURIER_URL, firstCreateCourierDto);
+        RequestsMethods.checkResponseStatusCode(firstResponse, MainSettings.CREATED_STATUS_CODE);
+        RequestsMethods.checkResponseBodyForCourierCreatePositive(firstResponse);
 
-        Response secondResponse = given()
-                .header(CONTENT_TYPE_STRING, CONTENT_TYPE_OBJECT)
-                .and()
-                .body(secondCreateCourierDto)
-                .post(COURIER_PATH);
-        secondResponse.then().statusCode(409);
-        secondResponse.then().assertThat().body("message",equalTo("Этот логин уже используется. Попробуйте другой."));
+        Response secondResponse = RequestsMethods.sendPost(MainSettings.COURIER_URL, secondCreateCourierDto);
+        RequestsMethods.checkResponseStatusCode(secondResponse, MainSettings.CONFLICT_STATUS_CODE);
+        RequestsMethods.checkResponseBodyForCourierCreateNegativeAlreadyExists(secondResponse);
     }
 
     @Test
     public void tryCreateCourierWithoutLoginField() {
-        Response secondResponse = given()
-                .header(CONTENT_TYPE_STRING, CONTENT_TYPE_OBJECT)
-                .and()
-                .body(new CreateCourierWithoutLoginDto(Utils.getRandomString(), Utils.getRandomString()))
-                .post(COURIER_PATH);
-        secondResponse.then().statusCode(BAD_CODE);
-        secondResponse.then().assertThat().body("message",equalTo(NOT_ENOUGH_DATA_MESSAGE));
+        Response response = RequestsMethods.sendPost(
+                MainSettings.COURIER_URL,
+                new CreateCourierWithoutLoginDto(Utils.getRandomString(),Utils.getRandomString())
+        );
+        RequestsMethods.checkResponseStatusCode(response, MainSettings.BAD_REQUEST_STATUS_CODE);
+        RequestsMethods.checkResponseBodyForCourierCreateNegative(response);
     }
 
     @Test
     public void tryCreateCourierWithoutPasswordField() {
-        Response secondResponse = given()
-                .header(CONTENT_TYPE_STRING, CONTENT_TYPE_OBJECT)
-                .and()
-                .body(new CreateCourierWithoutPasswordDto(Utils.getRandomString(), Utils.getRandomString()))
-                .post(COURIER_PATH);
-        secondResponse.then().statusCode(BAD_CODE);
-        secondResponse.then().assertThat().body("message",equalTo(NOT_ENOUGH_DATA_MESSAGE));
+        Response response = RequestsMethods.sendPost(
+                MainSettings.COURIER_URL,
+                new CreateCourierWithoutPasswordDto(Utils.getRandomString(),Utils.getRandomString())
+        );
+        RequestsMethods.checkResponseStatusCode(response, MainSettings.BAD_REQUEST_STATUS_CODE);
+        RequestsMethods.checkResponseBodyForCourierCreateNegative(response);
     }
 }

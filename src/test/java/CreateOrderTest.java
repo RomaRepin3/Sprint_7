@@ -1,14 +1,15 @@
+import dto.CreateOrderDto;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+import requests.RequestsMethods;
+import settings.MainSettings;
+import utils.Utils;
 
 import java.util.List;
-
-import static io.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.instanceOf;
 
 @RunWith(Parameterized.class)
 public class CreateOrderTest {
@@ -46,13 +47,8 @@ public class CreateOrderTest {
 
     @Test
     public void createOrder() {
-        Response response = given()
-                .header("Content-type", "application/json")
-                .and()
-                .body(createOrderDto)
-                .post("/api/v1/orders");
-        response.then().statusCode(201);
-        response.then().assertThat().body("track", instanceOf(int.class));
-
+        Response response = RequestsMethods.sendPost(MainSettings.ORDERS_URL, createOrderDto);
+        RequestsMethods.checkResponseStatusCode(response, MainSettings.CREATED_STATUS_CODE);
+        RequestsMethods.checkResponseBodyForOrderCreatePositive(response);
     }
 }
