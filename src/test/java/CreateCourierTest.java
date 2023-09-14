@@ -1,8 +1,6 @@
 import dto.*;
-import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import requests.RequestsMethods;
 import settings.MainSettings;
