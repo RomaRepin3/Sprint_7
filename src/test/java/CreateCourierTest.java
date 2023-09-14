@@ -4,7 +4,6 @@ import org.junit.After;
 import org.junit.Test;
 import requests.RequestsMethods;
 import settings.MainSettings;
-import utils.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +22,7 @@ public class CreateCourierTest extends BaseTest {
 
     @Test
     public void createCourier() {
-        CreateCourierDto createCourierDto = new CreateCourierDto(Utils.getRandomString(), Utils.getRandomString());
+        CreateCourierDto createCourierDto = new CreateCourierDto(faker.name().fullName(), faker.code().asin());
         courierList.add(createCourierDto);
 
         Response response = RequestsMethods.sendPost(MainSettings.COURIER_URL, createCourierDto);
@@ -33,9 +32,9 @@ public class CreateCourierTest extends BaseTest {
 
     @Test
     public void tryCreateTwoIdenticalCouriers() {
-        String identicalLogin = Utils.getRandomString();
-        CreateCourierDto firstCreateCourierDto = new CreateCourierDto(identicalLogin, Utils.getRandomString(), Utils.getRandomString());
-        CreateCourierDto secondCreateCourierDto = new CreateCourierDto(identicalLogin, Utils.getRandomString(), Utils.getRandomString());
+        String identicalLogin = faker.name().fullName();
+        CreateCourierDto firstCreateCourierDto = new CreateCourierDto(identicalLogin, faker.code().asin(), faker.name().firstName());
+        CreateCourierDto secondCreateCourierDto = new CreateCourierDto(identicalLogin, faker.code().asin(), faker.name().firstName());
         courierList.add(firstCreateCourierDto);
         courierList.add(secondCreateCourierDto);
 
@@ -52,7 +51,7 @@ public class CreateCourierTest extends BaseTest {
     public void tryCreateCourierWithoutLoginField() {
         Response response = RequestsMethods.sendPost(
                 MainSettings.COURIER_URL,
-                new CreateCourierWithoutLoginDto(Utils.getRandomString(),Utils.getRandomString())
+                new CreateCourierWithoutLoginDto(faker.code().asin(), faker.name().firstName())
         );
         RequestsMethods.checkResponseStatusCode(response, MainSettings.BAD_REQUEST_STATUS_CODE);
         RequestsMethods.checkResponseBodyForCourierCreateNegative(response);
@@ -62,7 +61,7 @@ public class CreateCourierTest extends BaseTest {
     public void tryCreateCourierWithoutPasswordField() {
         Response response = RequestsMethods.sendPost(
                 MainSettings.COURIER_URL,
-                new CreateCourierWithoutPasswordDto(Utils.getRandomString(),Utils.getRandomString())
+                new CreateCourierWithoutPasswordDto(faker.name().fullName(),faker.name().firstName())
         );
         RequestsMethods.checkResponseStatusCode(response, MainSettings.BAD_REQUEST_STATUS_CODE);
         RequestsMethods.checkResponseBodyForCourierCreateNegative(response);

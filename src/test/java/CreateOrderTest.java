@@ -5,7 +5,6 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import requests.RequestsMethods;
 import settings.MainSettings;
-import utils.Utils;
 
 import java.util.List;
 
@@ -26,14 +25,14 @@ public class CreateOrderTest  extends BaseTest{
 
     public CreateOrderTest(List<String> colours) {
         createOrderDto = new CreateOrderDto(
-                Utils.getRandomString(),
-                Utils.getRandomString(),
-                Utils.getRandomString(),
-                Utils.getRandomString(),
-                Utils.getRandomString(),
+                faker.name().firstName(),
+                faker.name().lastName(),
+                faker.address().fullAddress(),
+                faker.address().streetName(),
+                faker.phoneNumber().phoneNumber(),
                 1,
                 "2020-06-06",
-                Utils.getRandomString(),
+                faker.food().dish(),
                 colours
         );
     }

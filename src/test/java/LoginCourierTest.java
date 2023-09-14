@@ -5,14 +5,13 @@ import org.junit.Before;
 import org.junit.Test;
 import requests.RequestsMethods;
 import settings.MainSettings;
-import utils.Utils;
 
 public class LoginCourierTest extends BaseTest{
     private CreateCourierDto createCourierDto;
 
     @Before
     public void setUp() {
-        createCourierDto = new CreateCourierDto(Utils.getRandomString(), Utils.getRandomString());
+        createCourierDto = new CreateCourierDto(faker.name().fullName(), faker.code().asin());
         RequestsMethods.sendPost(MainSettings.COURIER_URL, createCourierDto);
     }
 
@@ -33,7 +32,7 @@ public class LoginCourierTest extends BaseTest{
 
     @Test
     public void tryLoginCourierWithIncorrectLogin() {
-        LoginCourierDto loginCourierDto = new LoginCourierDto(Utils.getRandomString(), createCourierDto.getPassword());
+        LoginCourierDto loginCourierDto = new LoginCourierDto(faker.name().fullName(), createCourierDto.getPassword());
         Response response = RequestsMethods.sendPost(MainSettings.LOG_IN_BY_COURIER_URL, loginCourierDto);
         RequestsMethods.checkResponseStatusCode(response, MainSettings.NOT_FOUND_STATUS_CODE);
         RequestsMethods.checkResponseBodyForCourierLoginNegativeWrongPasswordAndLogin(response);
@@ -41,7 +40,7 @@ public class LoginCourierTest extends BaseTest{
 
     @Test
     public void tryLoginCourierWithIncorrectPassword() {
-        LoginCourierDto loginCourierDto = new LoginCourierDto(createCourierDto.getLogin(), Utils.getRandomString());
+        LoginCourierDto loginCourierDto = new LoginCourierDto(createCourierDto.getLogin(), faker.code().asin());
         Response response = RequestsMethods.sendPost(MainSettings.LOG_IN_BY_COURIER_URL, loginCourierDto);
         RequestsMethods.checkResponseStatusCode(response, MainSettings.NOT_FOUND_STATUS_CODE);
         RequestsMethods.checkResponseBodyForCourierLoginNegativeWrongPasswordAndLogin(response);
