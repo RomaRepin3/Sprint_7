@@ -5,12 +5,7 @@ import org.junit.Test;
 import requests.RequestsMethods;
 import settings.MainSettings;
 
-public class GetOrdersListTest {
-
-    @Before
-    public void setUp() {
-        RestAssured.baseURI = "http://qa-scooter.praktikum-services.ru";
-    }
+public class GetOrdersListTest extends BaseTest{
 
     @Test
     public void getOrdersList() {

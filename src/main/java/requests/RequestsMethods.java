@@ -38,10 +38,6 @@ public class RequestsMethods {
     @Step("Удаление Курьера по ID")
     public static void sendDeleteWithParamId(int id){
         given().pathParam("id", id).delete("/api/v1/courier/{id}");
-//        given()
-//                .header(CONTENT_TYPE, APPLICATION_JSON)
-//                .when()
-//                .delete(url);
     }
 
     @Step("Проверка статус кода с ожидаемым")

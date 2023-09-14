@@ -8,12 +8,11 @@ import requests.RequestsMethods;
 import settings.MainSettings;
 import utils.Utils;
 
-public class LoginCourierTest {
+public class LoginCourierTest extends BaseTest{
     private CreateCourierDto createCourierDto;
 
     @Before
     public void setUp() {
-        RestAssured.baseURI = "http://qa-scooter.praktikum-services.ru";
         createCourierDto = new CreateCourierDto(Utils.getRandomString(), Utils.getRandomString());
         RequestsMethods.sendPost(MainSettings.COURIER_URL, createCourierDto);
     }

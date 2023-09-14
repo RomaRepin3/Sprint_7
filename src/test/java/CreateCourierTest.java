@@ -11,15 +11,8 @@ import utils.Utils;
 import java.util.ArrayList;
 import java.util.List;
 
-import static io.restassured.RestAssured.given;
-
-public class CreateCourierTest {
+public class CreateCourierTest extends BaseTest {
     List<CreateCourierDto> courierList = new ArrayList<>();
-
-    @Before
-    public void setUp() {
-        RestAssured.baseURI = "http://qa-scooter.praktikum-services.ru";
-    }
 
     @After
     public void tearDown() {

@@ -12,14 +12,9 @@ import utils.Utils;
 import java.util.List;
 
 @RunWith(Parameterized.class)
-public class CreateOrderTest {
+public class CreateOrderTest  extends BaseTest{
 
     private final CreateOrderDto createOrderDto;
-
-    @Before
-    public void setUp() {
-        RestAssured.baseURI = "http://qa-scooter.praktikum-services.ru";
-    }
 
     @Parameterized.Parameters
     public static Object[][] getTestData() {
